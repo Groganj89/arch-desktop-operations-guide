@@ -9,6 +9,26 @@
 
 ---
 
+## 📌 Positioning
+
+This guide is not affiliated with or endorsed by the Arch Linux project.
+
+It represents a structured operational model for running Arch Linux as a stable desktop system.
+
+Arch Linux intentionally avoids prescribing workflows.  
+This guide proposes one.
+
+It is based on:
+
+- Arch documentation
+- Arch news policy changes
+- Real-world desktop usage patterns
+- Rolling-release discipline principles
+
+You are encouraged to adapt it to your own needs.
+
+---
+
 ## 📘 What This Is
 
 This guide is not an installation tutorial.
