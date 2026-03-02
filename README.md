@@ -1,10 +1,13 @@
 # 🏔 Arch Desktop Operations Guide
 
+![Version](https://img.shields.io/badge/version-v1.4.0-blue)
+![Arch](https://img.shields.io/badge/Arch-Rolling%20Release-1793D1?logo=arch-linux&logoColor=white)
+![Model](https://img.shields.io/badge/model-Stability--Oriented-success)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
+
 > A structured, stability-oriented operational model for running Arch Linux as a long-term desktop system.
 
-**Version:** v1.4.0  
 **Last Reviewed Against Arch News:** 2026-03-02  
-**Model:** Rolling Release Discipline  
 **Audience:** Intermediate Desktop Users  
 
 ---
@@ -31,7 +34,7 @@ Adapt it to your own risk tolerance and workflow.
 
 ---
 
-# 📘 Introduction
+## 📘 Introduction
 
 Arch Linux provides a minimal base system. It does not assume:
 
@@ -47,28 +50,28 @@ This guide focuses on reducing common desktop failure modes while preserving Arc
 
 ---
 
-# 📚 Table of Contents
+## 📚 Table of Contents
 
-1. Threat Model  
-2. Scope  
-3. Core Arch Concepts  
-4. Kernel Variants  
-5. Graphics Stack  
-6. Wayland vs X11  
-7. Gaming Readiness  
-8. Development Baseline  
-9. Security Baseline  
-10. Privacy Configuration  
-11. BTRFS & Snapshot Strategy  
-12. Safe Update Workflow  
-13. System Profiles  
-14. Architectural Model  
-15. Troubleshooting & Common Mistakes  
-16. Change Log  
+- 🎯 Threat Model  
+- 📦 Scope  
+- 🧠 Core Concepts  
+- 🧩 Kernel Variants  
+- 🎨 Graphics Stack  
+- 🖥 Wayland vs X11  
+- 🎮 Gaming Readiness  
+- 💻 Development Baseline  
+- 🔐 Security Baseline  
+- 🌐 Privacy Configuration  
+- 🧱 BTRFS & Snapshot Strategy  
+- 🔄 Safe Update Workflow  
+- 🧭 System Profiles  
+- 🏗 Architectural Model  
+- 🛠 Troubleshooting & Common Mistakes  
+- 📝 Change Log  
 
 ---
 
-# 1️⃣ Threat Model
+# 🎯 Threat Model
 
 ## Context
 
@@ -82,18 +85,11 @@ This guide assumes:
 - Single trusted user  
 - No hostile physical access  
 
-### Not Covered
-
-- Enterprise compliance  
-- High-security adversarial environments  
-- Secure Boot deep configuration  
-- Public server hardening  
-
 If your environment differs, additional controls may be required.
 
 ---
 
-# 2️⃣ Scope
+# 📦 Scope
 
 This guide covers:
 
@@ -109,7 +105,7 @@ It does not cover initial Arch installation.
 
 ---
 
-# 3️⃣ Core Arch Concepts
+# 🧠 Core Concepts
 
 ## Rolling Release Discipline
 
@@ -127,11 +123,15 @@ Recommended pattern:
 sudo pacman -Syu
 ```
 
+Before major upgrades, review:
+
+👉 https://archlinux.org/news/
+
 Arch stability depends on synchronized system updates.
 
 ---
 
-# 4️⃣ Kernel Variants
+# 🧩 Kernel Variants
 
 ## Context
 
@@ -143,20 +143,18 @@ Latest mainline kernel.
 ### linux-lts
 Slower update cadence. Recommended as fallback.
 
-Install alongside default:
-
 ```bash
 sudo pacman -S linux-lts linux-lts-headers
 ```
 
+Installing `linux-lts` alongside the default kernel improves rollback resilience.
+
 ### linux-zen
 Performance-tuned. Optional.
 
-Installing `linux-lts` alongside the default kernel improves rollback resilience.
-
 ---
 
-# 5️⃣ Graphics Stack
+# 🎨 Graphics Stack
 
 ## Identify GPU
 
@@ -206,36 +204,29 @@ sudo pacman -S nvidia nvidia-utils lib32-nvidia-utils
 yay -S nvidia-580xx-dkms
 ```
 
----
+Before updating NVIDIA drivers:
 
-## Safe NVIDIA Update Checklist
-
-Before updating:
-
-1. Read Arch news  
-2. Snapshot (if using BTRFS)  
-3. Ensure kernel headers installed  
-4. Have fallback kernel available  
-5. Reboot after update  
-
-Arch news:  
-👉 https://archlinux.org/news/
+- Review Arch news  
+- Snapshot if using BTRFS  
+- Ensure matching kernel headers  
+- Keep a fallback kernel installed  
+- Reboot after update  
 
 ---
 
-# 6️⃣ Wayland vs X11
+# 🖥 Wayland vs X11
 
 Wayland is modern and default in GNOME.  
 KDE supports both.
 
-- AMD/Intel: Wayland recommended  
+- AMD/Intel: Wayland generally recommended  
 - NVIDIA: Modern drivers support Wayland; X11 remains fallback  
 
 Choose based on stability in your environment.
 
 ---
 
-# 7️⃣ Gaming Readiness
+# 🎮 Gaming Readiness
 
 Install Steam:
 
@@ -249,12 +240,6 @@ Install ProtonUp-Qt:
 yay -S protonup-qt
 ```
 
-Ensure Proton appears in:
-
-```
-~/.steam/root/compatibilitytools.d
-```
-
 Verify Vulkan:
 
 ```bash
@@ -263,9 +248,7 @@ vulkaninfo | less
 
 ---
 
-# 8️⃣ Development Baseline
-
-Install base tools:
+# 💻 Development Baseline
 
 ```bash
 sudo pacman -S git base-devel
@@ -282,9 +265,7 @@ Adding a user to the docker group grants elevated privileges. Consider implicati
 
 ---
 
-# 9️⃣ Security Baseline
-
-Install firewall:
+# 🔐 Security Baseline
 
 ```bash
 sudo pacman -S ufw
@@ -293,15 +274,11 @@ sudo ufw default deny incoming
 sudo ufw default allow outgoing
 ```
 
-Disable unnecessary services.
-
-Keep system minimal.
+Keep the system minimal. Disable unnecessary services.
 
 ---
 
-# 🔟 Privacy Configuration
-
-## DNS over TLS (Cloudflare Example)
+# 🌐 Privacy Configuration
 
 Edit:
 
@@ -322,13 +299,9 @@ Restart:
 sudo systemctl restart systemd-resolved
 ```
 
-Adapt to your preferred DNS provider.
-
 ---
 
-# 11️⃣ BTRFS & Snapshot Strategy
-
-Install Snapper:
+# 🧱 BTRFS & Snapshot Strategy
 
 ```bash
 sudo pacman -S snapper
@@ -345,89 +318,62 @@ Snapshots significantly reduce recovery time.
 
 ---
 
-# 12️⃣ Safe Update Workflow
+# 🔄 Safe Update Workflow
 
-Before major upgrades:
-
-1. Review Arch news  
-2. Snapshot  
-3. Update:
+- Review Arch news  
+- Snapshot  
+- Update:
 
 ```bash
 sudo pacman -Syu
 ```
 
-4. Reboot  
+- Reboot  
 
 These principles favor predictability over novelty.
 
 ---
 
-# 13️⃣ System Profiles
+# 🧭 System Profiles
 
-### Gaming Profile
-- Vulkan verified  
-- 32-bit libraries installed  
-- LTS kernel installed  
-
-### Development Profile
-- Minimal AUR usage  
-- Fallback kernel installed  
-- Container discipline  
-
-### Secure Profile
-- Firewall enabled  
-- Minimal services  
-- Conservative AUR usage  
-
-### Instructor / Lab Profile
-- Multi-user discipline  
-- No unnecessary privilege escalation  
-- Snapshot reset strategy  
+**Gaming:** Vulkan verified, 32-bit libraries installed, fallback kernel present  
+**Development:** Minimal AUR usage, controlled tooling  
+**Secure:** Firewall enabled, conservative configuration  
+**Instructor/Lab:** Multi-user discipline, snapshot reset strategy  
 
 ---
 
-# 14️⃣ Architectural Model
+# 🏗 Architectural Model
 
 Desktop layers:
 
-1. Applications  
-2. Desktop / Compositor  
-3. Graphics Stack  
-4. Kernel  
-5. System Services  
-6. Filesystem  
-7. Hardware  
+Applications → Desktop → Graphics → Kernel → Services → Filesystem → Hardware
 
-Most failures occur in one layer.  
-Troubleshoot methodically.
+Troubleshoot one layer at a time.
 
 ---
 
-# 15️⃣ Troubleshooting & Common Mistakes
+# 🛠 Troubleshooting
 
-Common issues:
+Common causes of instability:
 
 - Partial upgrades  
 - Driver mismatch  
 - Missing kernel headers  
-- Excessive AUR usage  
 - Ignoring Arch news  
-
-Recovery is easier with snapshot discipline.
+- Excessive AUR usage  
 
 ---
 
-# 16️⃣ Change Log
+# 📝 Change Log
 
 ## v1.4.0 – 2026-03-02
-- Added NVIDIA compatibility matrix  
-- Integrated 590 driver transition guidance  
-- Added Safe Update Workflow  
-- Added BTRFS snapshot strategy  
-- Added system profiles  
-- Added architectural model  
-- Tone calibrated for Arch alignment  
+- NVIDIA compatibility matrix  
+- Safe update workflow  
+- BTRFS snapshot strategy  
+- System profiles  
+- Architectural model  
+- Tone calibration for Arch alignment  
 
 ---
 
