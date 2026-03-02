@@ -1,11 +1,11 @@
-# 🏔 Arch Linux Desktop Operations Guide
+# 🏔 Arch Desktop Operations Guide
 
-> A structured, instructor-level post-install, stability, security, and maintenance guide for Arch Linux desktop systems.
+> A structured, stability-oriented operational model for running Arch Linux as a long-term desktop system.
 
 **Version:** v1.4.0  
 **Last Reviewed Against Arch News:** 2026-03-02  
 **Model:** Rolling Release Discipline  
-**Audience:** Intermediate desktop users  
+**Audience:** Intermediate Desktop Users  
 
 ---
 
@@ -13,162 +13,427 @@
 
 This guide is not affiliated with or endorsed by the Arch Linux project.
 
-It represents a structured operational model for running Arch Linux as a stable desktop system.
-
 Arch Linux intentionally avoids prescribing workflows.  
-This guide proposes one.
+This document proposes a structured operational model for running Arch Linux as a stable desktop system.
 
-It is based on:
+It draws from:
 
-- Arch documentation
-- Arch news policy changes
-- Real-world desktop usage patterns
-- Rolling-release discipline principles
+- Arch Wiki documentation  
+- Arch Linux news announcements  
+- Observed rolling-release failure patterns  
+- Desktop operational discipline practices  
 
-You are encouraged to adapt it to your own needs.
+For canonical documentation, always refer to the Arch Wiki:  
+👉 https://wiki.archlinux.org/
 
----
-
-## 📘 What This Is
-
-This guide is not an installation tutorial.
-
-It is an operational framework for running Arch Linux as a stable, long-term desktop system.
-
-It focuses on:
-
-- Update discipline
-- GPU driver strategy (including NVIDIA 590 changes)
-- Snapshot & rollback workflow
-- Wayland vs X11 considerations
-- Gaming readiness
-- Development baseline
-- Privacy-focused DNS configuration
-- Security hygiene for desktop systems
-- Multi-user vs single-user considerations
-
-The goal is simple:
-
-> Run Arch Linux intentionally — not reactively.
+This guide is intentionally conservative and stability-oriented.  
+Adapt it to your own risk tolerance and workflow.
 
 ---
 
-## 🎯 Who This Guide Is For
+# 📘 Introduction
 
-- Users who have completed an Arch install
-- KDE or GNOME desktop users
-- NVIDIA, AMD, or Intel GPU users
-- Developers using Arch as a workstation
-- Gamers running Steam / Proton
-- Users who want structured update discipline
-- Workshop instructors or lab administrators
+Arch Linux provides a minimal base system. It does not assume:
 
----
+- Your desktop environment  
+- Your GPU  
+- Your update tolerance  
+- Your risk model  
+- Your development stack  
 
-## ❌ Who This Guide Is Not For
+Most instability associated with Arch is operational, not structural.
 
-- First-time Linux users
-- Enterprise security deployments
-- Public-facing server hardening
-- Secure Boot deep-dive configuration
-- Compliance frameworks (CIS/STIG)
+This guide focuses on reducing common desktop failure modes while preserving Arch’s flexibility.
 
 ---
 
-## 🧠 Philosophy
+# 📚 Table of Contents
 
-Arch is stable when operated deliberately.
-
-Instability is almost always caused by:
-
-- Partial upgrades
-- Ignoring Arch news
-- GPU driver transitions
-- Excessive AUR usage
-- Lack of rollback strategy
-
-This guide enforces:
-
-- Snapshot before risk
-- Read before update
-- Install deliberately
-- Maintain discipline
-
----
-
-## 🧩 Major Sections
-
-- Kernel Variants (linux / lts / zen)
-- Graphics Stack (Intel / AMD / NVIDIA matrix)
-- NVIDIA 590 Driver Changes Explained
-- Safe Update Workflow
-- Wayland vs X11
-- Gaming Readiness
-- Media & Codecs
-- Development Stack
-- Security Baseline
-- Privacy Configuration
-- BTRFS & Snapper Appendix
-- System Profiles (Gaming / Dev / Secure / Instructor)
-- Architectural Overview Diagram
+1. Threat Model  
+2. Scope  
+3. Core Arch Concepts  
+4. Kernel Variants  
+5. Graphics Stack  
+6. Wayland vs X11  
+7. Gaming Readiness  
+8. Development Baseline  
+9. Security Baseline  
+10. Privacy Configuration  
+11. BTRFS & Snapshot Strategy  
+12. Safe Update Workflow  
+13. System Profiles  
+14. Architectural Model  
+15. Troubleshooting & Common Mistakes  
+16. Change Log  
 
 ---
 
-## 🔐 Security Model
+# 1️⃣ Threat Model
+
+## Context
+
+Security and stability recommendations only make sense within a defined model.
 
 This guide assumes:
 
-- Home NAT environment
-- No public-facing services
-- Single trusted user
-- No physical adversary
+- Home or lab environment  
+- Behind NAT  
+- No public-facing services  
+- Single trusted user  
+- No hostile physical access  
 
-If your environment differs, adjust accordingly.
+### Not Covered
 
----
+- Enterprise compliance  
+- High-security adversarial environments  
+- Secure Boot deep configuration  
+- Public server hardening  
 
-## 🏗 Design Principles
-
-- No partial upgrades
-- Snapshot before driver changes
-- Avoid unnecessary AUR packages
-- Install fallback kernel
-- Understand your GPU architecture
-- Prefer stability over novelty
+If your environment differs, additional controls may be required.
 
 ---
 
-## 📄 Full Guide
+# 2️⃣ Scope
 
-See the full guide here:
+This guide covers:
 
-👉 `docs/ARCH_DESKTOP_OPERATIONS_GUIDE.md`
+- KDE and GNOME desktops  
+- Intel / AMD / NVIDIA GPUs  
+- Gaming (Steam / Proton)  
+- Developer workstation baseline  
+- Snapshot & rollback discipline  
+- Security hygiene  
+- Privacy-focused DNS configuration  
 
----
-
-## 📜 License
-
-MIT License (or choose your preferred license)
-
----
-
-## 🤝 Contributing
-
-Pull requests welcome for:
-
-- Driver compatibility updates
-- Arch policy changes
-- Wayland improvements
-- Security corrections
-
-Please reference Arch news when proposing changes.
+It does not cover initial Arch installation.
 
 ---
 
-## ⚠ Disclaimer
+# 3️⃣ Core Arch Concepts
 
-Arch Linux is a rolling release distribution.
+## Rolling Release Discipline
 
-You are responsible for your system.
+Running:
 
-This guide reduces risk — it does not remove responsibility.
+```bash
+pacman -Sy
+```
+
+without `-u` is strongly discouraged due to partial upgrade risk.
+
+Recommended pattern:
+
+```bash
+sudo pacman -Syu
+```
+
+Arch stability depends on synchronized system updates.
+
+---
+
+# 4️⃣ Kernel Variants
+
+## Context
+
+The kernel defines hardware compatibility and driver interaction.
+
+### linux (default)
+Latest mainline kernel.
+
+### linux-lts
+Slower update cadence. Recommended as fallback.
+
+Install alongside default:
+
+```bash
+sudo pacman -S linux-lts linux-lts-headers
+```
+
+### linux-zen
+Performance-tuned. Optional.
+
+Installing `linux-lts` alongside the default kernel improves rollback resilience.
+
+---
+
+# 5️⃣ Graphics Stack
+
+## Identify GPU
+
+```bash
+lspci | grep -E "VGA|3D"
+```
+
+---
+
+## Intel
+
+```bash
+sudo pacman -S mesa vulkan-intel
+```
+
+---
+
+## AMD
+
+```bash
+sudo pacman -S mesa vulkan-radeon
+sudo pacman -S lib32-mesa lib32-vulkan-radeon
+```
+
+---
+
+## NVIDIA
+
+NVIDIA requires careful driver selection.
+
+### Driver Compatibility Matrix
+
+| Architecture | Example | Recommended |
+|-------------|----------|-------------|
+| Pascal | GTX 10xx | `nvidia-580xx-dkms` (AUR) |
+| Turing+ | RTX 20xx+ | `nvidia` |
+
+### Turing and Newer
+
+```bash
+sudo pacman -S nvidia nvidia-utils lib32-nvidia-utils
+```
+
+### Pascal (GTX 10xx)
+
+```bash
+yay -S nvidia-580xx-dkms
+```
+
+---
+
+## Safe NVIDIA Update Checklist
+
+Before updating:
+
+1. Read Arch news  
+2. Snapshot (if using BTRFS)  
+3. Ensure kernel headers installed  
+4. Have fallback kernel available  
+5. Reboot after update  
+
+Arch news:  
+👉 https://archlinux.org/news/
+
+---
+
+# 6️⃣ Wayland vs X11
+
+Wayland is modern and default in GNOME.  
+KDE supports both.
+
+- AMD/Intel: Wayland recommended  
+- NVIDIA: Modern drivers support Wayland; X11 remains fallback  
+
+Choose based on stability in your environment.
+
+---
+
+# 7️⃣ Gaming Readiness
+
+Install Steam:
+
+```bash
+sudo pacman -S steam
+```
+
+Install ProtonUp-Qt:
+
+```bash
+yay -S protonup-qt
+```
+
+Ensure Proton appears in:
+
+```
+~/.steam/root/compatibilitytools.d
+```
+
+Verify Vulkan:
+
+```bash
+vulkaninfo | less
+```
+
+---
+
+# 8️⃣ Development Baseline
+
+Install base tools:
+
+```bash
+sudo pacman -S git base-devel
+```
+
+Optional Docker:
+
+```bash
+sudo pacman -S docker
+sudo systemctl enable --now docker
+```
+
+Adding a user to the docker group grants elevated privileges. Consider implications.
+
+---
+
+# 9️⃣ Security Baseline
+
+Install firewall:
+
+```bash
+sudo pacman -S ufw
+sudo systemctl enable --now ufw
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+```
+
+Disable unnecessary services.
+
+Keep system minimal.
+
+---
+
+# 🔟 Privacy Configuration
+
+## DNS over TLS (Cloudflare Example)
+
+Edit:
+
+```
+/etc/systemd/resolved.conf
+```
+
+Add:
+
+```
+DNS=1.1.1.1 1.0.0.1
+DNSOverTLS=yes
+```
+
+Restart:
+
+```bash
+sudo systemctl restart systemd-resolved
+```
+
+Adapt to your preferred DNS provider.
+
+---
+
+# 11️⃣ BTRFS & Snapshot Strategy
+
+Install Snapper:
+
+```bash
+sudo pacman -S snapper
+sudo snapper -c root create-config /
+```
+
+Before major updates:
+
+```bash
+sudo snapper create --description "pre-update"
+```
+
+Snapshots significantly reduce recovery time.
+
+---
+
+# 12️⃣ Safe Update Workflow
+
+Before major upgrades:
+
+1. Review Arch news  
+2. Snapshot  
+3. Update:
+
+```bash
+sudo pacman -Syu
+```
+
+4. Reboot  
+
+These principles favor predictability over novelty.
+
+---
+
+# 13️⃣ System Profiles
+
+### Gaming Profile
+- Vulkan verified  
+- 32-bit libraries installed  
+- LTS kernel installed  
+
+### Development Profile
+- Minimal AUR usage  
+- Fallback kernel installed  
+- Container discipline  
+
+### Secure Profile
+- Firewall enabled  
+- Minimal services  
+- Conservative AUR usage  
+
+### Instructor / Lab Profile
+- Multi-user discipline  
+- No unnecessary privilege escalation  
+- Snapshot reset strategy  
+
+---
+
+# 14️⃣ Architectural Model
+
+Desktop layers:
+
+1. Applications  
+2. Desktop / Compositor  
+3. Graphics Stack  
+4. Kernel  
+5. System Services  
+6. Filesystem  
+7. Hardware  
+
+Most failures occur in one layer.  
+Troubleshoot methodically.
+
+---
+
+# 15️⃣ Troubleshooting & Common Mistakes
+
+Common issues:
+
+- Partial upgrades  
+- Driver mismatch  
+- Missing kernel headers  
+- Excessive AUR usage  
+- Ignoring Arch news  
+
+Recovery is easier with snapshot discipline.
+
+---
+
+# 16️⃣ Change Log
+
+## v1.4.0 – 2026-03-02
+- Added NVIDIA compatibility matrix  
+- Integrated 590 driver transition guidance  
+- Added Safe Update Workflow  
+- Added BTRFS snapshot strategy  
+- Added system profiles  
+- Added architectural model  
+- Tone calibrated for Arch alignment  
+
+---
+
+# ⚠ Disclaimer
+
+Arch Linux is a rolling release distribution. Operational discipline is required.
+
+This guide reduces common failure modes but does not eliminate risk.  
+You remain responsible for your system.
