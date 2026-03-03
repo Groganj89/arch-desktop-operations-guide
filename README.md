@@ -1,5 +1,13 @@
 # 🏔 Arch Desktop Operations Guide
 
+A structured operational model for maintaining a stable Arch Linux desktop on a rolling release system.
+
+This guide assumes familiarity with Arch Linux and focuses on long-term desktop stability, disciplined update practices, GPU driver lifecycle management, snapshot-based rollback strategy, and security baseline configuration.
+
+It does not replace the Arch Wiki. Instead, it provides a stability-oriented framework for running Arch responsibly in a desktop environment.
+
+---
+
 ![Version](https://img.shields.io/badge/version-v1.4.0-blue)
 ![Arch](https://img.shields.io/badge/Arch-Rolling%20Release-1793D1?logo=arch-linux&logoColor=white)
 ![Model](https://img.shields.io/badge/model-Stability--Oriented-success)
@@ -7,8 +15,13 @@
 
 > A structured, stability-oriented operational model for running Arch Linux as a long-term desktop system.
 
-**Last Reviewed Against Arch News:** 2026-03-02  
+**Last Reviewed Against Arch News:** 2026-03-02
 **Audience:** Intermediate Desktop Users  
+
+---
+
+## Philosophy
+This guide favors operational clarity over customization breadth.
 
 ---
 
@@ -695,13 +708,14 @@ None.
 ### Verification
 Readers can see what changed between versions.
 
-#### v1.4.0 — 2026-03-02
+#### v1.4.3 — 2026-03-03
 - Unified README
 - Tone calibrated for Arch alignment
 - NVIDIA compatibility matrix (Pascal vs Turing+)
 - Snapshot discipline integrated
 - Safe update workflow formalized
 - Profiles and architecture model included
+- Added philosophy
 
 ---
 
