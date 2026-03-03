@@ -15,7 +15,7 @@ It does not replace the Arch Wiki. Instead, it provides a stability-oriented fra
 
 > A structured, stability-oriented operational model for running Arch Linux as a long-term desktop system.
 
-**Last Reviewed Against Arch News:** 2026-03-02
+**Last Reviewed Against Arch News:** 2026-03-02   
 **Audience:** Intermediate Desktop Users  
 
 ---
